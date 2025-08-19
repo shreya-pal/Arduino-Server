@@ -2,7 +2,7 @@
 async function updateSensorValue() {
     try {
         // This calls your existing GET / endpoint!
-        const response = await fetch('/');
+        const response = await fetch('/api/data');
         // Parse the JSON response from FastAPI
         const data = await response.json();
 

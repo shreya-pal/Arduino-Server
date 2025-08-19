@@ -19,7 +19,6 @@ templates = Jinja2Templates(directory="templates")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -29,15 +28,26 @@ class SensorData(BaseModel):
 
 latest_data = None
 
-@app.post("/")
+# ... (imports and setup remain the same) ...
+
+# Your POST endpoint for the Arduino to send data
+@app.post("/api/data")  # <-- Changed from "/" to "/api/data"
 async def receive_sensor_data(data: SensorData):
     global latest_data
     latest_data = data.carVal
     return {"status": "success", "received_value": data.carVal}
 
+# Your GET endpoint for the JavaScript to fetch data
+@app.get("/api/data")   # <-- New endpoint for fetching data
+async def get_sensor_data():
+    return {"carVal": latest_data}  # Return the data as JSON
+
+# Your GET endpoint to serve the HTML page
 @app.get("/", response_class=HTMLResponse)
 async def read_dashboard(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+# ... (the rest remains the same) ...
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
