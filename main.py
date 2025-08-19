@@ -32,7 +32,7 @@ latest_data = None
 async def receive_sensor_data(data: SensorData):
     global latest_data
     latest_data = data.carVal
-    return {"status": "success"}
+    return {"status": "success", "received_value": data.carVal}
 
 @app.get("/", response_class=HTMLResponse)
 async def read_dashboard(request: Request):
